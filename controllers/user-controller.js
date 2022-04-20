@@ -1,4 +1,4 @@
-const { User } = require("../models");
+const { User, Thought } = require("../models");
 
 const userController = {
   // GET all users
@@ -55,10 +55,46 @@ const userController = {
   // DELETE a user by its _id
   deleteUser({ params }, res) {
     User.findOneAndDelete({ _id: params.id })
+      .then((deletedUser) => {
+        if (!deletedUser) {
+          return res
+            .status(404)
+            .json({ message: "No user found associated with this id!" });
+        }
+        return Thought.deleteMany({ username: params.username });
+      })
       .then((dbUserData) => res.json(dbUserData))
       .catch((err) => res.json(err));
   },
 
   // POST/Add a friend to a user's friend list
+  addFriend({ params, body }, res) {
+    User.findOneAndUpdate(
+      { _id: params.id },
+      { $push: { friends: body } },
+      { new: true }
+    )
+      .then((dbUserData) => {
+        if (!dbUserData) {
+          return res
+            .status(404)
+            .json({ message: "No user found associated with this id!" });
+        }
+        res.json(dbUserData);
+      })
+      .catch((err) => res.json(err));
+  },
+
   // DELETE/Remove a friend from a user's friend list
+  removeFriend({ params, body }, res) {
+    User.findOneAndUpdate(
+      { _id: params.id },
+      { $pull: { friends: { friendId: body.id } } },
+      { new: true }
+    )
+      .then((dbUserData) => res.json(dbUserData))
+      .catch((err) => res.json(err));
+  },
 };
+
+module.exports = userController;
