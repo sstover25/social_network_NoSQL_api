@@ -61,7 +61,7 @@ const userController = {
             .status(404)
             .json({ message: "No user found associated with this id!" });
         }
-        return Thought.deleteMany({ username: params.username });
+        return Thought.deleteMany({ username: deletedUser.username });
       })
       .then((dbUserData) => res.json(dbUserData))
       .catch((err) => res.json(err));
