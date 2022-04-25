@@ -4,7 +4,10 @@ const userController = {
   // GET all users
   getAllUsers(req, res) {
     User.find({})
-      .then((dbUserData) => res.json(dbUserData))
+      .then((dbUserData) => {
+        console.log(dbUserData);
+        res.json(dbUserData);
+      })
       .catch((err) => {
         console.log(err);
         res.sendStatus(400);
@@ -20,7 +23,15 @@ const userController = {
       .populate({
         path: "friends",
       })
-      .then((dbUserData) => res.json(dbUserData))
+      .then((dbUserData) => {
+        if (!dbUserData) {
+          res
+            .status(404)
+            .json({ message: "No user found associated with this id!" });
+          return;
+        }
+        res.json(dbUserData);
+      })
       .catch((err) => {
         console.log(err);
         res.sendStatus(400);
