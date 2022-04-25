@@ -1,4 +1,5 @@
 // formats dates to appear like "4/25/2022 11:47 AM"
+// coding credits from https://stackoverflow.com/questions/30486086/converting-a-long-date-with-time-to-mm-dd-yyyy-hhmm-am-pm
 
 const formatDate = (timestamp) => {
   const dateObj = new Date(timestamp);
